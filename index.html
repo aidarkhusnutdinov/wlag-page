@@ -64,6 +64,13 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* --- char fade-in --- */
+  @keyframes charIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .ch { animation: charIn 0.1s ease-out forwards; }
+
   /* --- sparkle --- */
   .sparkle {
     position: fixed;
@@ -151,7 +158,13 @@ function typeText(el, text) {
   return new Promise(resolve => {
     function frame(ts) {
       if (last === null) last = ts;
-      if (ts - last >= speed) { el.textContent = text.slice(0, ++i); last = ts; }
+      if (ts - last >= speed) {
+          const s = document.createElement('span');
+          s.className = 'ch';
+          s.textContent = text[i++];
+          el.appendChild(s);
+          last = ts;
+        }
       if (i < text.length) requestAnimationFrame(frame);
       else resolve();
     }
