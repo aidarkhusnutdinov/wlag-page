@@ -136,18 +136,40 @@ function burst(cx, cy) {
   }
 }
 
-/* ---- dynamic font size ---- */
-function calcFontSize(len) {
+/* ---- dynamic font size: pre-render to measure actual fit ---- */
+function measureFontSize(el, text) {
   const mobile = window.innerWidth < 640;
+  const candidates = mobile
+    ? ['11px', '9px', '8px', '7px']
+    : ['13px', '11px', '9px', '8px'];
+  const len = text.length;
+  let start = 0;
   if (mobile) {
-    if (len <= 30) return '11px';
-    if (len <= 55) return '9px';
-    return '7px';
+    if (len > 30) start = 1;
+    if (len > 55) start = 3;
+  } else {
+    if (len > 35) start = 1;
+    if (len > 60) start = 2;
+    if (len > 90) start = 3;
   }
-  if (len <= 35) return '13px';
-  if (len <= 60) return '11px';
-  if (len <= 90) return '9px';
-  return '8px';
+
+  el.style.opacity = '0';
+  const probe = document.createElement('div');
+  el.appendChild(probe);
+
+  let chosen = candidates[candidates.length - 1];
+  for (let i = start; i < candidates.length; i++) {
+    el.style.fontSize = candidates[i];
+    probe.textContent = text;
+    if (el.scrollHeight <= el.clientHeight) {
+      chosen = candidates[i];
+      break;
+    }
+  }
+
+  probe.remove();
+  el.style.opacity = '1';
+  return chosen;
 }
 
 /* ---- typewriter via rAF ---- */
@@ -209,7 +231,7 @@ typewriter.addEventListener('click', async () => {
   try {
     const lines = await getLines();
     const line  = pickLine(lines);
-    paperText.style.fontSize = calcFontSize(line.length);
+    paperText.style.fontSize = measureFontSize(paperText, line);
     await typeText(paperText, line);
   } catch {
     paperText.textContent = 'Не удалось загрузить идеи :(';
