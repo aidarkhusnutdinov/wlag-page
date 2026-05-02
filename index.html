@@ -157,11 +157,16 @@ function measureFontSize(el, text) {
   const probe = document.createElement('div');
   el.appendChild(probe);
 
+  const cs = getComputedStyle(el);
+  const availH = el.clientHeight
+    - parseFloat(cs.paddingTop)
+    - parseFloat(cs.paddingBottom);
+
   let chosen = candidates[candidates.length - 1];
   for (let i = start; i < candidates.length; i++) {
     el.style.fontSize = candidates[i];
     probe.textContent = text;
-    if (el.scrollHeight <= el.clientHeight) {
+    if (probe.offsetHeight <= availH) {
       chosen = candidates[i];
       break;
     }
