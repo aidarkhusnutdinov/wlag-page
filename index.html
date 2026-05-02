@@ -206,6 +206,8 @@ let busy = false;
 typewriter.addEventListener('click', async () => {
   if (busy) return;
   busy = true;
+  typewriter.style.cursor = 'default';
+  typewriter.style.pointerEvents = 'none';
   const rect = typewriter.getBoundingClientRect();
   burst(rect.left + rect.width * 0.5, rect.top + rect.height * 0.15);
   paperText.textContent = '';
@@ -218,6 +220,8 @@ typewriter.addEventListener('click', async () => {
   } catch {
     paperText.textContent = 'Не удалось загрузить идеи :(';
   }
+  typewriter.style.cursor = '';
+  typewriter.style.pointerEvents = '';
   busy = false;
 });
 </script>
