@@ -153,18 +153,20 @@ function calcFontSize(len) {
 /* ---- typewriter via rAF ---- */
 function typeText(el, text) {
   el.textContent = '';
+  const wrap = document.createElement('div');
+  el.appendChild(wrap);
   const speed = Math.max(90, Math.min(140, 3500 / text.length));
   let i = 0, last = null;
   return new Promise(resolve => {
     function frame(ts) {
       if (last === null) last = ts;
       if (ts - last >= speed) {
-          const s = document.createElement('span');
-          s.className = 'ch';
-          s.textContent = text[i++];
-          el.appendChild(s);
-          last = ts;
-        }
+        const s = document.createElement('span');
+        s.className = 'ch';
+        s.textContent = text[i++];
+        wrap.appendChild(s);
+        last = ts;
+      }
       if (i < text.length) requestAnimationFrame(frame);
       else resolve();
     }
