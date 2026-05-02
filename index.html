@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>О чём мне написать?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&subset=latin,cyrillic" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -182,10 +182,18 @@ function typeText(el, text) {
 let cachedLines = null;
 async function getLines() {
   if (cachedLines) return cachedLines;
-  const r = await fetch(
-    'https://raw.githubusercontent.com/writelikeagirl/ideasforwriting/refs/heads/main/ideas.txt'
-  );
-  cachedLines = (await r.text()).split('\n').filter(l => l.trim());
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  try {
+    const r = await fetch(
+      'https://raw.githubusercontent.com/writelikeagirl/ideasforwriting/refs/heads/main/ideas.txt',
+      { signal: controller.signal }
+    );
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    cachedLines = (await r.text()).split('\n').filter(l => l.trim());
+  } finally {
+    clearTimeout(timeout);
+  }
   return cachedLines;
 }
 
