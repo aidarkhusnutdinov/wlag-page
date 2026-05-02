@@ -97,10 +97,31 @@
     color: #aaa;
     letter-spacing: 0.05em;
   }
+
+  .rotate-hint {
+    display: none;
+  }
+
+  @media (orientation: landscape) and (max-height: 500px) {
+    .tw-wrap { display: none; }
+    .rotate-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      color: #aaa;
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+  }
 </style>
 </head>
 <body>
 
+<div class="rotate-hint">поверни телефон</div>
 <div class="tw-wrap" id="tw-wrap">
   <img class="tw-img" id="typewriter" src="Машинка.png" alt="Машинка">
   <div class="paper-text" id="paper-text"></div>
