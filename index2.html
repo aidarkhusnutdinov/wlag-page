@@ -105,18 +105,23 @@ const paperText  = document.getElementById('paper-text');
 const starsGif   = document.getElementById('stars-gif');
 
 const GIF_SRC      = 'animation stars.gif';
-const GIF_DURATION = 1200; /* подбери под реальную длину гифки (мс) */
+const GIF_DURATION = 2500; /* подбери под реальную длину гифки (мс) */
+
+/* Предзагрузка — гифка качается один раз при открытии страницы */
+const preloader = new Image();
+preloader.src = GIF_SRC;
 
 /* ---- GIF burst ---- */
 function burst() {
-  /* Перезапуск гифки: сбрасываем src → ставим заново с cache-bust */
-  starsGif.src = '';
+  /* Перезапуск из кэша: убираем src → reflow → возвращаем тот же src */
+  starsGif.removeAttribute('src');
+  void starsGif.offsetWidth; /* принудительный reflow */
+  starsGif.src = GIF_SRC;
   starsGif.classList.add('playing');
-  starsGif.src = GIF_SRC + '?' + Date.now();
   clearTimeout(starsGif._hideTimer);
   starsGif._hideTimer = setTimeout(() => {
     starsGif.classList.remove('playing');
-    starsGif.src = '';
+    starsGif.removeAttribute('src');
   }, GIF_DURATION);
 }
 
